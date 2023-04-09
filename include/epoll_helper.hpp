@@ -1,8 +1,14 @@
-#pragma once
+#ifndef EPOLL_HELPER_HPP
+#define EPOLL_HELPER_HPP
+
+// for now, use in c/cpp only
 
 #include <sys/epoll.h>
+#include <stdio.h>
 
-void decipher_epoll_event(unsigned int event)
+#ifdef TCP_DEBUG_EPOLL
+
+static void decipher_epoll_event(unsigned int event)
 {
     if (event & EPOLLIN) {
         printf("EPOLLIN (available for read) |");
@@ -24,3 +30,7 @@ void decipher_epoll_event(unsigned int event)
     }
     printf("\n");
 }
+#endif
+
+
+#endif

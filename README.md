@@ -8,13 +8,19 @@ Originally based on some [code I wrote earlier](https://gitlab.com/thosteg/tcp_c
 
 ## Goals and Non-Goals
 
+Main goal:
+
+Make it simple to play with c-networking under linux/unix.
+
 Goals:
 
-* Build a simple (not excessive) framework to allow me easily and simply fool around with linux networking primitives using c++
+* Make it simple to get started with basic c-networking
+* Make it simple to play around with basic c-networking (blocking, non-blocking, select...)
+* Do not obscure underlying functions and interfaces
 
 Non-Goals (Do not do):
 
-* Boilerplate that abstracts away from basic concepts such as fd, socket
+* Build a real-world networking library (catch errors other than via dying-guard)
 
 ## Requirements
 

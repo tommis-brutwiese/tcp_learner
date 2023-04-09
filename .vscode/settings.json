@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "tcp_laus.h": "c",
+        "guard.hpp": "c"
+    }
+}

@@ -1,0 +1,3 @@
+[submodule "external/tcp_client_server"]
+	path = external/tcp_client_server
+	url = git@gitlab.com:thosteg/tcp_client_server.git

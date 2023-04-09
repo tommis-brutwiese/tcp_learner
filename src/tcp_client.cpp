@@ -84,10 +84,12 @@ int main()
           "epoll_ctl: connect_sock\n");
     while (keep_running) {
         nfds = epoll_wait(epollfd, events, MAX_EVENTS, TIMEOUT_MS);
-        if (nfds & EINTR) {
-            keep_running = 0;
-        } else if (nfds < 0) {
-            guard(nfds, "epoll_wait\n");
+
+        if (nfds < 0) {
+            if (!(errno & EINTR)) {
+                // if neither interrupt nor timeout, purposely fail
+                guard(errno, "epoll_wait\n");
+            }
         }
 
         if (!keep_running) {
