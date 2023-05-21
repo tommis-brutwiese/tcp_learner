@@ -11,6 +11,10 @@
  * * Make testing different techniques easy
  * 
  * Safe: avoid hung file-descriptors - and waiting for events easy.
+ * 
+ * No-Goals:
+ * 
+ * * compatibility is not important
  */
 
 #include "epoll_helper.hpp"

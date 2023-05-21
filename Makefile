@@ -8,7 +8,7 @@ CFLAGS := -Wall -Werror -std=c11 -g
 
 SRCS := main.cpp
 
-TARGET_PROGS := main tcp_client_a tcp_server test_tcp_laus
+TARGET_PROGS := main tcp_client_a tcp_client_b tcp_server test_tcp_laus
 
 PROGS := $(foreach X, $(TARGET_PROGS), $(TARGET_DIR)/$(X))
 
@@ -28,20 +28,21 @@ run: $(PROGS)
 	$(TARGET_DIR)/main
 	$(TARGET_DIR)/tcp_server &
 	sleep 0.5
-	$(TARGET_DIR)/tcp_client_a &
+	
+	# can also use tcp_client_a - string read
+	$(TARGET_DIR)/tcp_client_b &
+	
 	sleep 5
 
 	# It should be sufficient to kill the server, but the client does not
 	# act correctly upon shutdown.
 	
-	killall tcp_client_a
+	killall tcp_client_b
 	killall tcp_server
-
 
 .PHONY: test
 test: $(TARGET_DIR)/test_tcp_laus
 	$<
-
 
 .PHONY: clean
 clean:

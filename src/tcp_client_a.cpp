@@ -1,3 +1,5 @@
+// Variant of tcp_client that reads c-strings
+
 #include <signal.h>
 #include <stdio.h>
 #include <assert.h>
