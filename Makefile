@@ -31,16 +31,22 @@ $(TARGET_DIR)/%: $(TARGET_DIR)/%.o $(TARGET_DIR)/tcp_read_write.o $(TARGET_DIR)/
 
 .PHONY: run
 run: $(TARGET_DIR)/tcp_server $(TARGET_DIR)/tcp_client_b
+	killall tcp_client_b || true
+	killall tcp_server   || true
+
+	@printf "\n## Starting tcp_server\n"
 	$(TARGET_DIR)/tcp_server &
 	sleep 0.5
-	
-	# can also use tcp_client_a - string read
+
+	@printf "\n## Starting tcp_client_b\n"
+	@# can also use tcp_client_a - string read
 	$(TARGET_DIR)/tcp_client_b &
 	
-	sleep 5
+	sleep 7
 
 	# It should be sufficient to kill the server, but the client does not
 	# act correctly upon shutdown.
+	@printf "\n## Stopping both processes\n"
 	
 	killall tcp_client_b
 	killall tcp_server
