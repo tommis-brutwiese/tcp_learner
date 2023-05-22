@@ -4,9 +4,12 @@
 #include <stdio.h>
 #include <assert.h>
 #include <time.h>
+#include <string.h>
 
+#include "guard.h"
 #include "sigterm_helper.hpp"
-#include "tcp_laus.h"
+#include "tcp_event.h"
+#include "tcp_read_write.h"
 
 void read_bytes_available(int sockfd);
 

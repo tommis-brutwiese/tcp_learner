@@ -1,14 +1,14 @@
-#pragma once
+#ifndef SIGTERM_HELPER_HPP
+#define SIGTERM_HELPER_HPP
 
-#include "guard.hpp"
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-#include <string.h>             // memset
-#include <signal.h>             // sigaction
+void register_sigint_handler(void (*)(int));
 
-void register_sigint_handler(void (*handler)(int))
-{
-    struct sigaction action;
-    memset(&action, 0, sizeof(action));
-    action.sa_handler = handler;
-    guard(sigaction(SIGINT, &action, NULL), "error registering SIGTERM\n");
+#ifdef __cplusplus
 }
+#endif
+
+#endif

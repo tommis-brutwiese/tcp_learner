@@ -1,13 +1,15 @@
-// using this before including tcp_laus.h - dep on order, not nice
+// using this before including tcp_event.h - dep on order, not nice
 // #define TCP_DEBUG_EPOLL
 
-#include "tcp_laus.h"
-#include "guard.hpp"
+#include "tcp_event.h"
+#include "guard.h"
 
-#include <errno.h>   // for EINTR
-#include <assert.h>  // assert
-// #include <sys/types.h>
-#include <sys/socket.h>
+#include <stdio.h>       // printf
+#include <errno.h>       // EINTR
+#include <assert.h>      // assert
+#include <string.h>      // memset
+#include <sys/socket.h>  // socket
+#include <netinet/in.h>  // sockaddr_in
 
 
 
@@ -184,10 +186,3 @@ struct tcp_event_result tcp_await_event(struct tcp_handler *con, int timeout_ms)
     }
 }
 
-int tcp_read_surrogate(int fd, void* buf, int numbytes) {
-    return read(fd, buf, numbytes);
-}
-
-int tcp_send_surrogate(int fd, const void* buf, int numbytes) {
-    return send(fd, buf, numbytes, 0);
-}

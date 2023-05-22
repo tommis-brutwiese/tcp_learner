@@ -1,15 +1,17 @@
 // Variant of tcp_client that reads fixed counts
 
-#include <signal.h>
-#include <stdio.h>
-#include <assert.h>
-#include <time.h>
+#include <signal.h>     // sig_atomic_t
+#include <stdio.h>      // printf
+#include <time.h>       // time
+#include <string.h>     // strlen
+#include <assert.h>     // assert
 
+
+#include "guard.h"
 #include "sigterm_helper.hpp"
-#include "tcp_laus.h"
+#include "tcp_event.h"
+#include "tcp_read_write.h"
 #include "tcp_read_buffer.hpp"
-
-
 
 
 #define TIMEOUT_MS 1000
@@ -21,6 +23,7 @@ void terminate(int signum) {
     printf("Received signal %d\n", signum);
     keep_running = 0;
 }
+
 bool a_second_has_just_passed(time_t* second_tracker) {
     if (*second_tracker == 0) {
         *second_tracker = time(NULL);

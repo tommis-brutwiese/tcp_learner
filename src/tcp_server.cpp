@@ -2,16 +2,17 @@
 
 #include "sigterm_helper.hpp"
 #include "epoll_helper.hpp"
-#include "guard.hpp"
+#include "guard.h"
 
+#include <signal.h>             // sig_atomic_t
 #include <unistd.h>             // read
 #include <stdlib.h>             // EXIT_FAILURE
 #include <stdio.h>              // println, perror
 #include <string.h>             // memset
 #include <netinet/in.h>         // sockaddr_in
-#include <sys/socket.h>
+#include <sys/socket.h>         // socket
 #include <fcntl.h>              // fcntl
-#include <sys/epoll.h>
+#include <sys/epoll.h>          // epoll
 #include <errno.h>              // EINTR
 
 

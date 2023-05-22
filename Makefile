@@ -6,26 +6,31 @@ TEST_DIR := test
 CPPFLAGS := -Wall -Werror -std=c++20 -g
 CFLAGS := -Wall -Werror -std=c11 -g
 
-SRCS := main.cpp
+HEADERS := epoll_helper.hpp guard.hpp sigterm_helper.hpp tcp_event.h tcp_read_buffer.hpp tcp_read_write.h guard.h
 
-TARGET_PROGS := main tcp_client_a tcp_client_b tcp_server test_tcp_laus
+HEADER_FILES := $(foreach X, $(HEADERS), $(INCLUDE_DIR)/$(X))
 
-PROGS := $(foreach X, $(TARGET_PROGS), $(TARGET_DIR)/$(X))
+TARGET_PROGS := tcp_client_a tcp_client_b tcp_server test_tcp_event
+
+PROGS   := $(foreach X, $(TARGET_PROGS), $(TARGET_DIR)/$(X))
+PROGS_O := $(foreach X, $(PROGS), $(X).o)
 
 .PHONY: help
 help:
 	@echo Available targets:
 	@egrep "^\.PHONY:" Makefile | sed "s/.PHONY: */\t/"
 
-.PHONY: build
-build: ${PROGS} doc
+.PHONY: all
+all: build test run
 
-${PROGS} : $(TARGET_DIR)/% : $(TARGET_DIR)/%.o $(TARGET_DIR)/tcp_laus.o $(TARGET_DIR)/tcp_read_buffer.o
+.PHONY: build
+build: $(PROGS) doc
+
+$(TARGET_DIR)/%: $(TARGET_DIR)/%.o $(TARGET_DIR)/tcp_read_write.o $(TARGET_DIR)/tcp_event.o $(TARGET_DIR)/tcp_read_buffer.o $(TARGET_DIR)/sigterm_helper.o $(TARGET_DIR)/guard.o
 	g++ $^ -o $@
 
 .PHONY: run
-run: $(PROGS)
-	$(TARGET_DIR)/main
+run: $(TARGET_DIR)/tcp_server $(TARGET_DIR)/tcp_client_b
 	$(TARGET_DIR)/tcp_server &
 	sleep 0.5
 	
@@ -41,7 +46,7 @@ run: $(PROGS)
 	killall tcp_server
 
 .PHONY: test
-test: $(TARGET_DIR)/test_tcp_laus
+test: $(TARGET_DIR)/test_tcp_event
 	$<
 
 .PHONY: clean
@@ -58,8 +63,8 @@ doc: $(TARGET_DIR)/README.html
 $(TARGET_DIR)/%.o: $(SOURCE_DIR)/%.cpp
 	g++ ${CPPFLAGS} -I $(INCLUDE_DIR) -c $< -o $@
 
-$(TARGET_DIR)/tcp_laus.o: $(SOURCE_DIR)/tcp_laus.c
+$(TARGET_DIR)/%.o: $(SOURCE_DIR)/%.c
 	gcc ${CFLAGS} -I $(INCLUDE_DIR) -c $< -o $@
 
-$(TARGET_DIR)/test_tcp_laus.o: $(TEST_DIR)/test_tcp_laus.c
+$(TARGET_DIR)/test_tcp_event.o: $(TEST_DIR)/test_tcp_event.c
 	gcc ${CFLAGS} -I $(INCLUDE_DIR) -c $< -o $@

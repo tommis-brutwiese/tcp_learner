@@ -1,6 +1,6 @@
 
-#ifndef TCP_READ_BUFFER_H
-#define TCP_READ_BUFFER_H
+#ifndef TCP_READ_BUFFER_HPP
+#define TCP_READ_BUFFER_HPP
 
 #include "stdlib.h"
 
