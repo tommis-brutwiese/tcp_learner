@@ -7,8 +7,8 @@
 
 #include "sigterm_helper.hpp"
 #include "tcp_laus.h"
+#include "tcp_read_buffer.hpp"
 
-void read_bytes_available(int sockfd);
 
 
 
@@ -21,91 +21,6 @@ void terminate(int signum) {
     printf("Received signal %d\n", signum);
     keep_running = 0;
 }
-
-struct TcpReadBuffer {
-    unsigned char* buf_start; /* complete buffer */
-    unsigned char* write_pos; /* pointer to write position within complete buffer */
-    int buf_size; /* size of buffer */
-};
-
-static void tcp_read_buffer_zero(TcpReadBuffer* buf) {
-    memset(buf, 0, sizeof(TcpReadBuffer));
-    assert(buf->buf_start == NULL);
-    assert(buf->write_pos == NULL);
-    assert(buf->buf_size == 0);
-}
-
-void tcp_read_buffer_init(TcpReadBuffer* buf, size_t siz) {
-    assert(buf);
-    tcp_read_buffer_zero(buf);
-    assert(buf->buf_start = (unsigned char*)calloc(siz, 1));
-    buf->write_pos = buf->buf_start;
-}
-
-void tcp_read_buffer_clear(TcpReadBuffer* buf) {
-    assert(buf);
-    free(buf->buf_start);
-    tcp_read_buffer_zero(buf);
-}
-
-void tcp_read_buffer_reset(TcpReadBuffer* buf) {
-    assert(buf);
-    buf->write_pos = buf->buf_start;
-}
-
-
-enum TcpReadResult {
-    TCP_READ_COMPLETE = 0,
-    TCP_READ_INCOMPLETE,
-    TCP_READ_ERROR
-};
-
-/**
- * @brief Reads exactly num bytes into the given buffer
- * 
- * Returns if the desired total number could be read.
- * The intention of this method is that it can be called multiple
- * times non-blocking, filling up the read bytes as they come, until
- * the total desired number could be read.
- * 
- * The desired number must fit.
- * 
- * @param buf 
- * @param num_bytes 
- * @return enum TcpReadResult 
- */
-enum TcpReadResult tcp_read_buffer_exact(int sockfd, TcpReadBuffer* buf, size_t num_bytes) {
-    assert(buf);
-    assert(buf->buf_start);
-    assert(buf->write_pos);
-
-    if (buf->write_pos > buf->buf_start + num_bytes) {
-        /* actually only valid: end pos + 1 */
-        return TCP_READ_COMPLETE;
-    }
-
-    const int num_read_previously = buf->write_pos - buf->buf_start;
-    const int remaining = num_bytes - num_read_previously;
-    assert(remaining > 0);
-
-    const int num_read = tcp_read_surrogate(sockfd, buf->write_pos, remaining);
-    if (num_read == -1) {
-        return TCP_READ_ERROR;
-    }
-
-    buf->write_pos += num_read;
-    assert(buf->write_pos >= buf->buf_start);
-
-    const size_t total_read = buf->write_pos - buf->buf_start;
-    if (total_read < num_bytes) {
-        return TCP_READ_INCOMPLETE;
-    } else if (total_read == num_bytes) {
-        return TCP_READ_COMPLETE;
-    } else {
-        return TCP_READ_ERROR;
-    }
-}
-
 bool a_second_has_just_passed(time_t* second_tracker) {
     if (*second_tracker == 0) {
         *second_tracker = time(NULL);
@@ -153,7 +68,7 @@ int main() {
                             assert(buffer.buf_start[buffer.buf_size - 1] == 0);
                             printf("Received \"%s\"\n", buffer.buf_start);
                             fflush(stdout);
-                            tcp_read_buffer_reset(&buffer);
+                            tcp_read_buffer_empty(&buffer);
                             break;
                         case TCP_READ_INCOMPLETE:
                             printf("Incomplete read. Continue later.\n");
@@ -182,7 +97,7 @@ int main() {
     }
 
     tcp_handler_clear(&handler);
-    tcp_read_buffer_clear(&buffer);
+    tcp_read_buffer_free(&buffer);
 
     return 0;
 }

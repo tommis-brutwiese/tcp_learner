@@ -20,7 +20,7 @@ help:
 .PHONY: build
 build: ${PROGS} doc
 
-${PROGS} : $(TARGET_DIR)/% : $(TARGET_DIR)/%.o $(TARGET_DIR)/tcp_laus.o
+${PROGS} : $(TARGET_DIR)/% : $(TARGET_DIR)/%.o $(TARGET_DIR)/tcp_laus.o $(TARGET_DIR)/tcp_read_buffer.o
 	g++ $^ -o $@
 
 .PHONY: run
