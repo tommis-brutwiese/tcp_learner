@@ -2,7 +2,12 @@
 TARGET_DIR := target
 SOURCE_DIR := src
 INCLUDE_DIR := include
+
+EXAMPLE_DIR := examples
+TOOL_DIR := tools
 TEST_DIR := test
+
+
 CPPFLAGS := -Wall -Werror -std=c++20 -g
 CFLAGS := -Wall -Werror -std=c11 -g
 
@@ -67,6 +72,12 @@ $(TARGET_DIR)/README.html: README.md
 doc: $(TARGET_DIR)/README.html
 
 $(TARGET_DIR)/%.o: $(SOURCE_DIR)/%.cpp
+	g++ ${CPPFLAGS} -I $(INCLUDE_DIR) -c $< -o $@
+
+$(TARGET_DIR)/%.o: $(EXAMPLE_DIR)/%.cpp
+	g++ ${CPPFLAGS} -I $(INCLUDE_DIR) -c $< -o $@
+
+$(TARGET_DIR)/%.o: $(TOOL_DIR)/%.cpp
 	g++ ${CPPFLAGS} -I $(INCLUDE_DIR) -c $< -o $@
 
 $(TARGET_DIR)/%.o: $(SOURCE_DIR)/%.c
