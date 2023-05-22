@@ -25,7 +25,7 @@ static void tcp_read_buffer_zero_internal(TcpReadBuffer* buf) {
 }
 
 static void tcp_read_buffer_reset_internal(TcpReadBuffer* buf, unsigned char* buf_start, size_t buf_size) {
-    assert(tcp_read_buffer_is_init(buf));
+    assert(buf);
     tcp_read_buffer_zero_internal(buf);
 
     buf->buf_size = buf_size;
